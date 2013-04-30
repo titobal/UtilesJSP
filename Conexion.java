@@ -65,22 +65,14 @@ public class Conexion {
             }
         }
         catch(SQLException ex){
-            map = new HashMap<String, String>();
-            map.put("err", "1");
-            map.put("msg", "Error al ejecutar la consulta");
-            ret = new ArrayList<Map<String, String>>();
-            ret.add(map);
+            ret = this.mapError("Error al ejecutar la consulta", ex.getMessage());
         }
         finally{
             try {
                 con.close();
                 ps.close();
             } catch (SQLException ex) {
-                map = new HashMap<String, String>();
-                map.put("err", "1");
-                map.put("msg", "Error al Intentar cerrar la conexion");
-                ret = new ArrayList<Map<String, String>>();
-                ret.add(map);
+                ret = this.mapError("Error al Intentar cerrar la conexion", ex.getMessage());
             }
             return ret;
         }
@@ -100,10 +92,20 @@ public class Conexion {
                 con.close();
                 ps.close();
             } catch (SQLException ex) {
-                //Logger.getLogger(AlumnoDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ex.getMessage()).log(Level.SEVERE, null, ex);
             }
             return this.filasAfectadas;
         }
+    }
+    
+    private List<Map<String, String>> mapError(String mensaje, String exmsg){
+        List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+        Map map = new HashMap<String, String>();
+        map.put("err", "1");
+        map.put("msg", mensaje);
+        map.put("exmsg", exmsg);
+        list.add(map);
+        return list;
     }
     
     public int getFilasAfectadas(){
