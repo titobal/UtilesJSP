@@ -37,9 +37,13 @@ mysql> Select * From Prueba;
 El método q(String query) retornará un Map por cada fila, que contendrá la siguiente estructura:
 
 q("SELECT * FROM Prueba", new String[]{"Id", "Nombre"}) //en el array de String se especifican los alias de las columnas
+
 "0"=>"1"
+
 "Id"=>"1"
+
 "1"=>"asdadasd"
+
 "Nombre","asdadasd"
 
 El List<> contendrá todas las filas de los Map, convertido con GSON, el objeto JSON queda de la siguiente forma:
