@@ -14,24 +14,24 @@ Ejemplo de uso q(String query, String[] columnas)
 dada la tabla Prueba
 
 mysql> desc Prueba;
-+--------+--------------+------+-----+---------+----------------+
+
 | Field  | Type         | Null | Key | Default | Extra          |
-+--------+--------------+------+-----+---------+----------------+
+
 | Id     | int(11)      |      | PRI | NULL    | auto_increment |
-| Nombre | varchar(200) |      |     |         |                |
-+--------+--------------+------+-----+---------+----------------+
+
+| Nombre | varchar(200) |
 
 con los datos
 
 select * from Prueba;
 mysql> Select * From Prueba;
-+----+----------+
 | Id | Nombre   |
-+----+----------+
+
 |  1 | asdadasd |
+
 |  2 | asdadasd |
+
 |  3 | asdadasd |
-+----+----------+
 
 El método q(String query) retornará un Map por cada fila, que contendrá la siguiente estructura:
 
