@@ -25,6 +25,7 @@ con los datos
 
 select * from Prueba;
 mysql> Select * From Prueba;
+
 | Id | Nombre   |
 
 |  1 | asdadasd |
