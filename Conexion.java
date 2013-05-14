@@ -36,9 +36,9 @@ public class Conexion {
         } catch (ClassNotFoundException ex) {
             logger.log(Level.CONFIG, "No se puede cargar el Driver: {0}", ex.getMessage());
         }
-        url = "jdbc:mysql://localhost/prueba"; //Nombre y ubicación de la base de datos
+        url = "jdbc:mysql://localhost/admin"; //Nombre y ubicación de la base de datos
         user = "root"; //Usuario de conexión a la BD
-        pass = "root"; //Contraseña del usuario de conesión a la BD
+        pass = ""; //Contraseña del usuario de conesión a la BD
         try {
             con = DriverManager.getConnection(url, user, pass);
         } catch (SQLException ex) {
@@ -46,7 +46,7 @@ public class Conexion {
         }
     }
     
-    public List<Map<String, String>> q(String query, String[] columns){
+    public List<Map<String, String>> q(String query, String[] columns, boolean cierra){
         this.filasAfectadas = 0;
         Map<String, String> map;
         List<Map<String, String>> ret = new ArrayList<Map<String, String>>();
@@ -55,30 +55,34 @@ public class Conexion {
             ps = con.prepareStatement(query);
             rs = ps.executeQuery();
             int largo = columns.length;
-            while (rs.next()) {
-                map = new HashMap<String, String>();
-                for(int x = 0; x < largo; x++){
-                    map.put(String.valueOf(x), rs.getString(x+1));
-                    map.put(columns[x], rs.getString(x+1));
-                }
-                ret.add(map);
+            if (rs.next()) {
+                do{
+                    map = new HashMap<String, String>();
+                    for(int x = 0; x < largo; x++){
+                        map.put(String.valueOf(x), rs.getString(x+1));
+                        map.put(columns[x], rs.getString(x+1));
+                    }
+                    ret.add(map);
+                } while (rs.next());
             }
         }
         catch(SQLException ex){
             ret = this.mapError("Error al ejecutar la consulta", ex.getMessage());
         }
         finally{
-            try {
-                con.close();
-                ps.close();
-            } catch (SQLException ex) {
-                ret = this.mapError("Error al Intentar cerrar la conexion", ex.getMessage());
+            if(cierra){
+                try {
+                    con.close();
+                    ps.close();
+                } catch (SQLException ex) {
+                    ret = this.mapError("Error al Intentar cerrar la conexion", ex.getMessage());
+                }
             }
             return ret;
         }
     }
     
-    public int s(String query){
+    public int s(String query, boolean cierra){
         this.filasAfectadas = 0;
         try{
             ps = con.prepareStatement(query);
@@ -88,13 +92,24 @@ public class Conexion {
             logger.log(Level.CONFIG, "Insert, sql erronea: {0}", ex.getMessage());
         }
         finally{
-            try {
-                con.close();
-                ps.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(ex.getMessage()).log(Level.SEVERE, null, ex);
+            if(cierra){
+                try {
+                    con.close();
+                    ps.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(ex.getMessage()).log(Level.SEVERE, null, ex);
+                }
             }
             return this.filasAfectadas;
+        }
+    }
+    
+    public void cierra(){
+        try {
+            con.close();
+            ps.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(ex.getMessage()).log(Level.SEVERE, null, ex);
         }
     }
     
